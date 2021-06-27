@@ -14,7 +14,7 @@ If you get a message during the run that says "Couldn\'t find tile by image. Loo
 
 Change the dictionary "tiles" at line 20.
 
-### meanings
+## Meanings
 cb: Clicked Bom
 f: flag
 b: Bom
