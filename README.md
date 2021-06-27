@@ -12,7 +12,9 @@ Open https://minesweeperonline.com/ and get the whole board on screen. Make sure
 
 If you get a message during the run that says "Couldn\'t find tile by image. Look at the image and correct the number in the tiles dictionary. This number should be "number"!"
 
-Change the dictionary "tiles" at line 20.
+Change the dictionary "tiles" at line 20. Check Meanings for the meanings of the letters.
+
+After a win you can get a message that says that it's wrong. But ignore that.
 
 ## Meanings
 cb: Clicked Bom
