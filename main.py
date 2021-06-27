@@ -30,7 +30,8 @@ tiles = {
    34088: '5', 
    37826: '4',
    9009: "cb",
-   40578: '6'
+   40578: '6',
+   29216: 'b2',
 }
 
 def removeFromArray(item, array):
@@ -117,12 +118,10 @@ def reset():
     time.sleep(.1)   
     pyautogui.mouseUp()
                 
-def analyze(first):
+def analyze():
     global past,did_nothing
 
-
     board = np.zeros((boardLengths[1], boardLengths[0]), str)
-
     board_img =  cv2.cvtColor(np.array(ImageGrab.grab((BEGIN[0],BEGIN[1],BEGIN[0]+16*boardLengths[0], BEGIN[1]+16*boardLengths[1]))), cv2.COLOR_BGR2GRAY)
 
     for y in range(0,len(board_img),16):
@@ -135,7 +134,6 @@ def analyze(first):
                     return
                 board[y//16,x//16 ] = tiles[summer]
             else:
-                # print(s ummer)
                 cv2.imshow('',board_img[y:y+16, x:x+16])
                 print(f'Couldn\'t find tile by image. Look at the image and correct the number in the tiles dictionary. This number should be {summer}!')
                 cv2.waitKey(0)
@@ -169,7 +167,7 @@ def analyze(first):
                     num_needed = int(board[y,x])-surrounds['surroundNumbers'].count('f')
                     
                     
-                    if num_needed != 0:
+                    if num_needed != 0 and surrounds['surroundNumbers'].count('?') != 0:
                         weight = num_needed/surrounds['surroundNumbers'].count('?')
                         for i,surround in enumerate(surrounds['surroundNumbers']):
                             if surround == '?':
@@ -187,25 +185,10 @@ def analyze(first):
                 elif chance_board[y,x] < lowest[1] and board[y,x] == '?' and  chance_board[y,x] != 0:
                     lowest[1] = chance_board[y,x]
                     lowest[0] = [x,y]
-        clickTile(highest[0][0],highest[0][1], 'right')
-        # clickTile(lowest[0][0],lowest[0][1], 'left')
-        # print(chance_board)
-        # exit()
-                
-                    
-                
-                
-            
-        
-        
+        clickTile(highest[0][0],highest[0][1], 'right')   
 
 reset()        
-
-
-# clickTile(boardLengths[0]//2, boardLengths[1]//2, 'left')    
-# time.sleep(.001)          
-first = True
+   
 while True:
-    analyze(first)
-    first = False
+    analyze()
 
