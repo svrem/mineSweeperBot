@@ -8,11 +8,11 @@ import random
 time.sleep(2)
 try:
     BEGIN_IMAGE = pyautogui.locateOnScreen('empty.png')
+    BEGIN = (BEGIN_IMAGE.left,BEGIN_IMAGE.top)
 except: 
     print('Could\'t find board.')
     exit()
-BEGIN = (BEGIN_IMAGE.left,BEGIN_IMAGE.top)
-boardLengths = (16  ,16) # x=y y=x
+boardLengths = (9  ,9) # x=y y=x
 
 pyautogui.PAUSE = 0.001
 
