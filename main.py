@@ -6,11 +6,13 @@ import time
 import random
 
 time.sleep(2)
-
-BEGIN_IMAGE = pyautogui.locateOnScreen('empty.png')
+try:
+    BEGIN_IMAGE = pyautogui.locateOnScreen('empty.png')
+except: 
+    print('Could\'t find board.')
+    exit()
 BEGIN = (BEGIN_IMAGE.left,BEGIN_IMAGE.top)
 boardLengths = (16  ,16) # x=y y=x
-print(BEGIN)
 
 pyautogui.PAUSE = 0.001
 
@@ -133,9 +135,10 @@ def analyze(first):
                     return
                 board[y//16,x//16 ] = tiles[summer]
             else:
-                print(summer)
+                # print(s ummer)
                 cv2.imshow('',board_img[y:y+16, x:x+16])
-                cv2.waitKey(1)
+                print(f'Couldn\'t find tile by image. Look at the image and correct the number in the tiles dictionary. This number should be {summer}!')
+                cv2.waitKey(0)
     if ('?' not in board):
         print('ez')
         time.sleep(3)
