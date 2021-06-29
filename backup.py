@@ -58,7 +58,7 @@ def getSurround(x,y,board):
         removeFromArray([-1,-1],surrounds)
         removeFromArray([-1,0],surrounds)
         removeFromArray([-1,1],surrounds)
-    if (x == boardLengths[0]-1):
+    if (x == boardLengths[1]-1):
         removeFromArray([1,-1],surrounds)
         removeFromArray([1,0],surrounds)
         removeFromArray([1,1],surrounds)
@@ -66,7 +66,7 @@ def getSurround(x,y,board):
         removeFromArray([0,-1],surrounds)
         removeFromArray([-1,-1],surrounds)
         removeFromArray([1,-1],surrounds)
-    if (y == boardLengths[1]-1):
+    if (y == boardLengths[0]-1):
         removeFromArray([-1,1],surrounds)
         removeFromArray([0,1],surrounds)
         removeFromArray([1,1],surrounds)
@@ -81,7 +81,6 @@ def getSurround(x,y,board):
     return {'surroundNumbers': surroundNumbers, 'positions': positions}
 
 def clickTile(x,y, typeClick):
-    # print(x,y,typeClick)
     pyautogui.click(BEGIN[0]+8+(x*16),BEGIN[1]+8+(y*16), button=typeClick, duration=0)
     
 def simple_calc(board):
@@ -89,8 +88,8 @@ def simple_calc(board):
 
     past = 0
 
-    for x in range(boardLengths[1]):
-        for y in range(boardLengths[0]):
+    for x in range(boardLengths[0]-1):
+        for y in range(boardLengths[1]-1):
             surroundsRes = getSurround(x,y,board)
             surrounds = surroundsRes['surroundNumbers']
             positions = surroundsRes['positions']
@@ -103,15 +102,9 @@ def simple_calc(board):
 
                             clickTile(positions[i][0],positions[i][1], 'right')
                             board[positions[i][1],positions[i][0]] = 'f'
-                if surrounds.count('f') == int(board[y,x]) and surrounds.count('?') > 0:
-                    
-                    # print(board)
-                    
+                if surrounds.count('f') == int(board[y,x]) and surrounds.count('?') > 0:           
                     needChange = [pos for pos in positions if board[pos[1]][pos[0]] == '?']
-                    
                     for pos in needChange: board[pos[1], pos[0]] = '!'
-                    # print(board)
-                    # exit()
                     clickTile(x,y, 'middle')
                     past += 1
     if past == 0: 
@@ -158,6 +151,7 @@ def analyze():
         time.sleep(3)
         # reset()
         exit()
+        
 
     if did_nothing < 2:
 
@@ -177,32 +171,34 @@ def random_calc(board):
     highest = [[0,0], -101]
     chances = 1
 
-    for y in range(len(chance_board)):
-        for x in range(len(chance_board[y])):   
-            if chance_board[y,x] > highest[1] and board[y,x] == '?':
-                highest[1] = chance_board[y,x]
-                highest[0] = [x,y]
-            if chance_board[y,x] == highest[1]:
-                chances *= 2
-                if random.randint(0,chances) == 0:
+    for y in range(boardLengths[0]-1):
+        for x in range(boardLengths[1]-1):
+            if [x,y] not in presses:
+                
+                if chance_board[y,x] > highest[1] and board[x,y] == '?':
                     highest[1] = chance_board[y,x]
                     highest[0] = [x,y]
-            elif chance_board[y,x] < lowest[1] and board[y,x] == '?' and  chance_board[y,x] != 0:
-                lowest[1] = chance_board[y,x]
-                lowest[0] = [x,y]
+                if chance_board[y,x] == highest[1]:
+                    chances *= 2
+                    if random.randint(0,chances) == 0:
+                        highest[1] = chance_board[y,x]
+                        highest[0] = [x,y]
+                elif chance_board[y,x] < lowest[1] and board[x,y] == '?' and  chance_board[y,x] != 0:
+                    lowest[1] = chance_board[y,x]
+                    lowest[0] = [x,y]
     if highest[0] not in presses:
-        board[highest[0][1],highest[0][0]] = 'f'
+        board[highest[0][0],highest[0][1]] = 'f'
 
-        clickTile(highest[0][0],highest[0][1], 'right')
+        clickTile(highest[0][1],highest[0][0], 'right')
         presses.append(highest[0])
     else:
-        print('good job')
+        print(presses, highest[0])
 
 def gen_chance_board(board):
     chance_board = np.zeros((boardLengths[0],boardLengths[1]))
 
-    for y in range(len(board)):
-        for x in range(len(board[y])):
+    for x in range(boardLengths[0]-1):
+        for y in range(boardLengths[1]-1):
             if (RepresentsInt(board[y,x])):
                 surrounds = getSurround(x,y,board)
                 num_needed = int(board[y,x])-surrounds['surroundNumbers'].count('f')
@@ -212,17 +208,17 @@ def gen_chance_board(board):
                     weight = num_needed/surrounds['surroundNumbers'].count('?')
                     for i,surround in enumerate(surrounds['surroundNumbers']):
                         if surround == '?':
-                            chance_board[surrounds['positions'][i][1],surrounds['positions'][i][0]] += weight 
+                            chance_board[surrounds['positions'][i][0],surrounds['positions'][i][1]] += weight 
                 else:
-                    chance_board[y,x] += -100
-    print(chance_board)
+                    chance_board[x,y] += -100
     return chance_board
-        # print(highest)
 
 reset()       
 
 
 while True:
     analyze()
-    
+    # exit()
+
+
 
